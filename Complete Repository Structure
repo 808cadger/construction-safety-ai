@@ -1,0 +1,56 @@
+construction-safety-ai/
+│
+├── 📁 app/
+│   ├── __init__.py
+│   ├── main.py
+│   ├── config.py
+│   ├── models.py
+│   ├── email_service.py
+│   ├── ppe_detector.py
+│   └── database.py
+│
+├── 📁 templates/
+│   ├── base.html
+│   ├── index.html
+│   ├── worker_management.html
+│   └── reports.html
+│
+├── 📁 static/
+│   ├── css/
+│   │   └── styles.css
+│   ├── js/
+│   │   └── app.js
+│   └── images/
+│       └── logo.png
+│
+├── 📁 models/
+│   ├── yolov8n.pt
+│   └── construction_ppe.pt
+│
+├── 📁 tests/
+│   ├── test_ppe_detection.py
+│   ├── test_email_service.py
+│   └── test_database.py
+│
+├── 📁 docs/
+│   ├── README.md
+│   ├── INSTALLATION.md
+│   ├── USAGE.md
+│   └── API.md
+│
+├── 📁 examples/
+│   ├── demo_videos/
+│   └── sample_violations/
+│
+├── 📁 config/
+│   ├── settings.py
+│   └── email_config.py
+│
+├── .gitignore
+├── requirements.txt
+├── setup.py
+├── Dockerfile
+├── docker-compose.yml
+├── LICENSE
+├── CONTRIBUTING.md
+└── README.md
