@@ -1,0 +1,12 @@
+Using Docker Compose (Recommended):
+docker-compose -f docker-compose.prod.yml up -d
+
+
+Using Systemd:
+sudo cp safety-monitor.service /etc/systemd/system/
+sudo systemctl enable safety-monitor
+sudo systemctl start safety-monitor
+
+
+Using Gunicorn:
+gunicorn -w 4 -b 0.0.0.0:5000 app.main:app
