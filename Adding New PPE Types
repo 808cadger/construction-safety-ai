@@ -1,0 +1,44 @@
+Train YOLO model with new PPE classes
+Update app/ppe_detector.py
+Add new violation types to configuration
+Update email templates
+
+Custom Email Templates
+Edit the email templates in app/email_service.py:
+   Copied EMAIL_TEMPLATES = {
+    'violation_alert': 'templates/emails/violation_alert.html',
+    'compliance_report': 'templates/emails/compliance_report.html'
+} 🔧 Troubleshooting
+Common Issues
+Camera not detected:
+   Copied # Check available cameras
+python -c "import cv2; print([cv2.VideoCapture(i).isOpened() for i in range(10)])" Email not sending:
+
+Verify SMTP credentials
+Check firewall settings
+Enable less secure apps (for Gmail)
+
+Model not loading:
+
+Download the model file from releases
+Check file permissions
+Verify model path in configuration
+
+🤝 Contributing
+We welcome contributions! Please see CONTRIBUTING.md for guidelines.
+Quick Contribution Guide:
+
+Fork the repository
+Create a feature branch (git checkout -b feature/amazing-feature)
+Commit your changes (git commit -m 'Add amazing feature')
+Push to the branch (git push origin feature/amazing-feature)
+Open a Pull Request
+
+📝 License
+This project is licensed under the MIT License - see the LICENSE file for details.
+🙏 Acknowledgments
+
+Ultralytics YOLO for the AI model
+Flask for the web framework
+OpenCV for computer vision
+Bootstrap for UI components
