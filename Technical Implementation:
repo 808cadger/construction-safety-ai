@@ -1,0 +1,205 @@
+# app.py - Main Flask Application
+from flask import Flask, render_template, Response, request, jsonify
+import cv2
+import torch
+from ultralytics import YOLO
+import smtplib
+from email.mime.text import MIMEText
+from email.mime.multipart import MIMEMultipart
+from datetime import datetime
+import sqlite3
+import threading
+import time
+
+app = Flask(__name__)
+
+# Initialize YOLO model for PPE detection
+model = YOLO('yolov8n.pt')  # You can use custom trained model
+model = YOLO('construction_ppe.pt')  # Custom trained model for PPE
+
+# Email configuration
+EMAIL_CONFIG = {
+    'smtp_server': 'smtp.gmail.com',
+    'smtp_port': 587,
+    'sender_email': 'safety@constructionsite.com',
+    'sender_password': 'your_app_password'
+}
+
+# Database setup
+def init_db():
+    conn = sqlite3.connect('safety_violations.db')
+    c = conn.cursor()
+    c.execute('''CREATE TABLE IF NOT EXISTS violations
+                 (id INTEGER PRIMARY KEY AUTOINCREMENT,
+                  timestamp DATETIME DEFAULT CURRENT_TIMESTAMP,
+                  violation_type TEXT,
+                  worker_email TEXT,
+                  image_path TEXT,
+                  confidence REAL,
+                  status TEXT DEFAULT 'active')''')
+    conn.commit()
+    conn.close()
+
+class VideoCamera:
+    def __init__(self):
+        self.video = cv2.VideoCapture(0)
+        self.violation_detected = False
+        self.last_violation_time = 0
+        
+    def __del__(self):
+        self.video.release()
+    
+    def detect_ppe_violations(self, frame):
+        """Detect PPE violations using YOLO"""
+        results = model(frame, conf=0.5)
+        
+        violations = []
+        for r in results:
+            boxes = r.boxes
+            if boxes is not None:
+                for box in boxes:
+                    cls = int(box.cls[0])
+                    conf = float(box.conf[0])
+                    
+                    # Check for PPE violations
+                    if cls in [7, 8, 9, 10]:  # no_helmet, no_goggle, no_gloves, no_boots
+                        violations.append({
+                            'type': model.names[cls],
+                            'confidence': conf,
+                            'box': box.xyxy[0].tolist()
+                        })
+        
+        return violations
+    
+    def send_alert_email(self, violation_type, worker_email, image_path):
+        """Send email alert for safety violation"""
+        try:
+            msg = MIMEMultipart()
+            msg['From'] = EMAIL_CONFIG['sender_email']
+            msg['To'] = worker_email
+            msg['Subject'] = 'SAFETY VIOLATION ALERT - Immediate Action Required'
+            
+            body = f"""
+            Dear Worker,
+            
+            A safety violation has been detected on the construction site:
+            
+            Violation Type: {violation_type}
+            Time: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}
+            Location: Construction Site - Zone A
+            
+            This is an automated safety alert. Please ensure you are wearing proper PPE.
+            
+            Safety is everyone's responsibility.
+            
+            Best regards,
+            Construction Site Safety Team
+            """
+            
+            msg.attach(MIMEText(body, 'plain'))
+            
+            # Connect to SMTP server and send email
+            server = smtplib.SMTP(EMAIL_CONFIG['smtp_server'], EMAIL_CONFIG['smtp_port'])
+            server.starttls()
+            server.login(EMAIL_CONFIG['sender_email'], EMAIL_CONFIG['sender_password'])
+            server.send_message(msg)
+            server.quit()
+            
+            print(f"Alert email sent to {worker_email}")
+            
+        except Exception as e:
+            print(f"Error sending email: {str(e)}")
+    
+    def log_violation_db(self, violation_type, worker_email, image_path, confidence):
+        """Log violation to database"""
+        conn = sqlite3.connect('safety_violations.db')
+        c = conn.cursor()
+        c.execute("INSERT INTO violations (violation_type, worker_email, image_path, confidence) VALUES (?, ?, ?, ?)",
+                 (violation_type, worker_email, image_path, confidence))
+        conn.commit()
+        conn.close()
+    
+    def get_frame(self):
+        success, frame = self.video.read()
+        if not success:
+            return None
+            
+        # Detect PPE violations
+        violations = self.detect_ppe_violations(frame)
+        
+        # Draw bounding boxes and labels
+        for violation in violations:
+            box = violation['box']
+            x1, y1, x2, y2 = map(int, box)
+            
+            # Draw red box for violation
+            cv2.rectangle(frame, (x1, y1), (x2, y2), (0, 0, 255), 2)
+            cv2.putText(frame, f"{violation['type']}: {violation['confidence']:.2f}", 
+                       (x1, y1-10), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 255), 2)
+        
+        # Handle violations
+        current_time = time.time()
+        if violations and (current_time - self.last_violation_time) > 30:  # 30 second cooldown
+            self.violation_detected = True
+            self.last_violation_time = current_time
+            
+            # Save violation image
+            timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
+            image_path = f'static/violations/violation_{timestamp}.jpg'
+            cv2.imwrite(image_path, frame)
+            
+            # Log to database
+            for violation in violations:
+                self.log_violation_db(violation['type'], 'worker@construction.com', image_path, violation['confidence'])
+                
+                # Send email alert
+                threading.Thread(target=self.send_alert_email, 
+                               args=(violation['type'], 'worker@construction.com', image_path)).start()
+        
+        # Convert to JPEG
+        ret, jpeg = cv2.imencode('.jpg', frame)
+        return jpeg.tobytes()
+
+# Global camera instance
+camera = VideoCamera()
+
+@app.route('/')
+def index():
+    return render_template('index.html')
+
+@app.route('/video_feed')
+def video_feed():
+    def gen():
+        while True:
+            frame = camera.get_frame()
+            if frame:
+                yield (b'--frame\r\n'
+                       b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n\r\n')
+    
+    return Response(gen(), mimetype='multipart/x-mixed-replace; boundary=frame')
+
+@app.route('/violations')
+def get_violations():
+    conn = sqlite3.connect('safety_violations.db')
+    c = conn.cursor()
+    c.execute("SELECT * FROM violations ORDER BY timestamp DESC LIMIT 50")
+    violations = c.fetchall()
+    conn.close()
+    
+    return jsonify([{
+        'id': v[0],
+        'timestamp': v[1],
+        'violation_type': v[2],
+        'worker_email': v[3],
+        'image_path': v[4],
+        'confidence': v[5],
+        'status': v[6]
+    } for v in violations])
+
+@app.route('/worker_management')
+def worker_management():
+    return render_template('worker_management.html')
+
+if __name__ == '__main__':
+    init_db()
+    app.run(debug=True, host='0.0.0.0', port=5000)
