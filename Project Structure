@@ -1,0 +1,8 @@
+construction-safety-ai/
+├── app/                    # Application code
+├── templates/             # HTML templates
+├── static/                  # CSS, JS, images
+├── tests/                   # Unit tests
+├── models/                  # AI models
+├── config/                  # Configuration files
+└── docs/                    # Documentation
