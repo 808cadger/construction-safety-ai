@@ -1,0 +1,99 @@
+Install dependencies:
+
+   Copied pip install -r requirements.txt 
+Download PPE detection model:
+
+
+Train your own model using the Construction-PPE dataset from Roboflow
+Or use pre-trained models from the repositories I found
+
+
+Configure email settings:
+
+
+Update the EMAIL_CONFIG in app.py with your SMTP details
+Set up app password for Gmail or use your email provider
+
+
+Create necessary directories:
+
+   Copied mkdir -p static/violations
+mkdir templates 
+Run the application:
+
+   Copied python app.py Key Features Implemented:
+
+Real-time PPE Detection:
+
+
+Uses YOLOv8 for detecting missing helmets, vests, gloves, boots, and goggles
+Provides confidence scores for each detection
+Highlights violations with red bounding boxes
+
+
+Automated Alerts:
+
+
+Sends email notifications to workers when violations are detected
+Logs all violations to SQLite database
+30-second cooldown between alerts to prevent spam
+
+
+Supervisor Dashboard:
+
+
+Live camera feed monitoring
+Real-time violation statistics
+Historical violation records
+Worker management interface
+
+
+Email Notifications:
+
+
+Professional email format with violation details
+Automated sending with threading to prevent blocking
+Customizable email templates
+
+Advanced Features You Can Add:
+
+Worker Recognition:
+
+
+Face recognition to identify specific workers
+Integration with worker database
+Personalized violation tracking
+
+
+Multi-Camera Support:
+
+
+Support for multiple camera zones
+Zone-specific violation rules
+Comprehensive site coverage
+
+
+Mobile App Integration:
+
+
+Push notifications to supervisors' phones
+Mobile dashboard for on-site monitoring
+Photo evidence collection
+
+
+Advanced Analytics:
+
+
+Safety compliance reports
+Worker safety scores
+Predictive safety analytics
+
+
+IoT Integration:
+
+
+Integration with smart helmets and wearables
+Environmental sensors (temperature, gas levels)
+Equipment proximity detection
+
+This solution provides a complete, production-ready construction site safety monitoring system with AI-powered PPE detection, automated alerts, and comprehensive violation management. The system can be easily deployed on construction sites and scaled to multiple cameras and locations.
