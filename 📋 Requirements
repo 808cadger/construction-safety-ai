@@ -1,0 +1,30 @@
+Python 3.8+
+OpenCV-compatible camera (or video file)
+SMTP email account for notifications
+At least 4GB RAM (for AI model)
+
+🛠️ Configuration
+Environment Variables
+Create a .env file in the root directory:
+   Copied # Flask Configuration
+FLASK_APP=app/main.py
+FLASK_ENV=development
+SECRET_KEY=your-secret-key-here
+
+# Email Configuration
+SMTP_SERVER=smtp.gmail.com
+SMTP_PORT=587
+SENDER_EMAIL=your-email@gmail.com
+SENDER_PASSWORD=your-app-password
+
+# Database Configuration
+DATABASE_URL=sqlite:///safety_violations.db
+
+# Camera Configuration
+CAMERA_INDEX=0
+CAMERA_WIDTH=1280
+CAMERA_HEIGHT=720
+
+# AI Model Configuration
+MODEL_PATH=models/construction_ppe.pt
+CONFIDENCE_THRESHOLD=0.5
