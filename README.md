@@ -1,5 +1,12 @@
 # Construction Safety AI
 
+## Download Links
+
+- **iOS / iPhone:** Open the PWA in Safari: [Construction Safety AI iOS install](https://808cadger.github.io/construction-safety-ai/) and choose **Share -> Add to Home Screen**.
+- **Android:** Download the latest APK from GitHub Releases: [Construction Safety AI Android releases](https://github.com/808cadger/construction-safety-ai/releases/latest).
+- **Source download:** [Download the GitHub source ZIP](https://github.com/808cadger/construction-safety-ai/archive/refs/heads/main.zip).
+
+
 <!-- INSTALL-START -->
 ## Install and run
 
