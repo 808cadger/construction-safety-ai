@@ -1,10 +1,35 @@
 # Construction Safety AI
 
+[![Release](https://img.shields.io/github/v/release/808cadger/construction-safety-ai?include_prereleases&label=release)](https://github.com/808cadger/construction-safety-ai/releases)
+[![Last commit](https://img.shields.io/github/last-commit/808cadger/construction-safety-ai)](https://github.com/808cadger/construction-safety-ai/commits)
+[![License](https://img.shields.io/github/license/808cadger/construction-safety-ai)](https://github.com/808cadger/construction-safety-ai/blob/HEAD/LICENSE)
+![Platforms](https://img.shields.io/badge/platform-Python%2FAPI%2C%20Computer%20Vision-2563eb)
+
+Computer-vision safety monitor for construction PPE and jobsite compliance workflows.
+
+## Project Snapshot
+
+| Area | Details |
+|------|---------|
+| Primary use case | Computer-vision safety monitor for construction PPE and jobsite compliance workflows. |
+| Platforms | Python/API, Computer Vision |
+| Core stack | Python, YOLOv8, FastAPI, Computer Vision |
+| Review first | `README.md` |
+
 ## Download Links
 
-- **iOS / iPhone:** Open the PWA in Safari: [Construction Safety AI iOS install](https://808cadger.github.io/construction-safety-ai/) and choose **Share -> Add to Home Screen**.
-- **Android:** Download the latest APK from GitHub Releases: [Construction Safety AI Android releases](https://github.com/808cadger/construction-safety-ai/releases/latest).
-- **Source download:** [Download the GitHub source ZIP](https://github.com/808cadger/construction-safety-ai/archive/refs/heads/main.zip).
+| Platform | Link |
+|----------|------|
+| iOS / iPhone | [Open the PWA in Safari](https://808cadger.github.io/construction-safety-ai/) and choose **Share -> Add to Home Screen** |
+| Android | [Download the latest APK from GitHub Releases](https://github.com/808cadger/construction-safety-ai/releases/latest) |
+| Source | [Download the GitHub source ZIP](https://github.com/808cadger/construction-safety-ai/archive/refs/heads/main.zip) |
+| Repository | [View on GitHub](https://github.com/808cadger/construction-safety-ai) |
+
+## Why This Repo Is Worth Reviewing
+
+- Targets a real construction safety compliance use case.
+- Python package/API structure keeps model logic testable.
+- Clear fit for AI, CV, and construction-tech review.
 
 
 <!-- INSTALL-START -->
